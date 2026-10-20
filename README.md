@@ -12,7 +12,7 @@ Built for I-Chip '26 PS-1 (SCALE-X), Udyam '26, Electronics Engineering Society.
 - Parameterized input and output resolution (`W_in`, `H_in`, `W_out`, `H_out`)
 - Fixed-point source-coordinate computation with 8 fractional bits, integer arithmetic only
 - No divider in hardware (the scale ratio is a compile-time constant)
-- Fully pipelined datapath, one output pixel issued per clock
+- Fully pipelined datapath, one output pixel issued per clock, with no idle or delay stage
 - Edge clamping, so the 2x2 neighbourhood never reads outside the image
 - Rounded (not truncated) interpolation result
 - File-based I/O with `$readmemh` / `$writememh`
@@ -80,21 +80,21 @@ plain integer arithmetic carried at full width and rounded down to 8 bits once, 
 
 ## Architecture
 
-The design is a 5-stage pipeline. Once the
-pipeline is full, one output pixel is finished every clock cycle.
+The design is a 4-stage pipeline. Once the pipeline is full, one output pixel is
+finished every clock cycle. There is no idle or pass-through stage: every stage does
+real work.
 
 | Stage | Registers | What happens |
 |-------|-----------|--------------|
 | Control | `cnt_x`, `cnt_y`, `running`, `issued_last` | Counts through the output pixels row by row (left to right, top to bottom), one pixel per clock |
 | S1 | `s1_*` | Fixed-point source coordinates `x_in`, `y_in` |
 | S2 | `s2_*` | Whole-pixel neighbours `x0`, `y0`, `x1`, `y1` (clamped) and fractions `a`, `b` |
-| S3 | `s3_*` | Delay stage: passes the neighbour indices and fractions on unchanged |
-| S4 | `s4_*` | Fetch of the four neighbour pixels from `input_img` |
+| S3 | `s3_*` | Fetch of the four neighbour pixels from `input_img`; fractions `a`, `b` carried along |
 | Final | `output_img` | Weighted sum, rounding, write at `y_out*W_out + x_out` |
 
 Each stage carries `x_out`, `y_out` and a `valid` bit alongside its data. The `valid` bit
 says whether the data is a real pixel, and the coordinates tell the final stage where to
-write. Latency is 5 clocks from issue to write. `done` goes high when the last output
+write. Latency is 4 clocks from issue to write. `done` goes high when the last output
 pixel has been written, and the output file is dumped on every clock while `done` is high.
 
 ## Interface
