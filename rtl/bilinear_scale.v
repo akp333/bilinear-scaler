@@ -25,26 +25,25 @@ reg issued_last;
 reg[15:0] cnt_x, cnt_y;
 
 reg[31:0] s1_xin, s1_yin;
-reg[31:0] s1_xout, s1_yout;
+reg[15:0] s1_xout, s1_yout;
 reg s1_valid;
 
-reg[31:0] s2_xin, s2_yin;
+reg[7:0] s2_a, s2_b;
 reg[15:0] s2_x0, s2_y0, s2_x1, s2_y1;
 reg[15:0] s2_xout, s2_yout;
 reg s2_valid;
 
-reg[31:0] s3_xin, s3_yin;
 reg[15:0] s3_xout, s3_yout;
 reg[15:0] s3_x0, s3_y0, s3_x1, s3_y1;
-reg[23:0] s3_a, s3_b;
+reg[7:0] s3_a, s3_b;
 reg s3_valid;
 
-reg[15:0] s4_I00, s4_I10, s4_I01, s4_I11;
-reg[31:0] s4_a, s4_b;
+reg[7:0] s4_I00, s4_I10, s4_I01, s4_I11;
+reg[7:0] s4_a, s4_b;
 reg[15:0] s4_xout, s4_yout;
 reg s4_valid;
 
-reg[31:0] val;
+reg[23:0] val;
 
 always @(posedge clk or posedge rst) begin
     if(rst) begin
@@ -93,16 +92,16 @@ always @(posedge clk) begin
     s2_y0<=((s1_yin>>8)>=(H_in-1))?(H_in-1):(s1_yin>>8);
     s2_x1<=((s1_xin>>8)>=(W_in-1))?(W_in-1):((s1_xin>>8)+1);
     s2_y1<=((s1_yin>>8)>=(H_in-1))?(H_in-1):((s1_yin>>8)+1);
-    s2_xin<=s1_xin;
-    s2_yin<=s1_yin;
+    s2_a<=s1_xin[7:0];
+    s2_b<=s1_yin[7:0];
     s2_xout<=s1_xout;
     s2_yout<=s1_yout;
     s2_valid<=s1_valid;
 end
 
 always @(posedge clk) begin
-    s3_a<=s2_xin[7:0];
-    s3_b<=s2_yin[7:0];
+    s3_a<=s2_a;
+    s3_b<=s2_b;
     s3_x0<=s2_x0;
     s3_y0<=s2_y0;
     s3_x1<=s2_x1;
