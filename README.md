@@ -118,16 +118,6 @@ pixel has been written, and the output file is dumped on every clock while `done
 - **`input.hex`**: one 8-bit pixel per line in hex, row by row, `W_in * H_in` lines.
 - **`output.hex`**: same format, `W_out * H_out` lines.
 
-## Files in this repository
-
-| File | Purpose |
-|------|---------|
-| `bilinear_pipelined.v` | The scaler design (module `bilinear_scale`) |
-| `test.v` | Testbench (module `tb`): makes a 100 MHz clock, resets, pulses `start`, waits for `done` |
-| `gen_input.py` | Python script that turns an image into `input.hex` |
-| `check.py` | Python script that compares `output.hex` with a reference and prints PSNR and SSIM |
-| `input.hex` | Test input image |
-
 ## Results
 
 Test: grayscale image, 474 x 296 scaled up to 500 x 500.
