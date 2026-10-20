@@ -33,15 +33,10 @@ reg[15:0] s2_x0, s2_y0, s2_x1, s2_y1;
 reg[15:0] s2_xout, s2_yout;
 reg s2_valid;
 
-reg[15:0] s3_xout, s3_yout;
-reg[15:0] s3_x0, s3_y0, s3_x1, s3_y1;
+reg[7:0] s3_I00, s3_I10, s3_I01, s3_I11;
 reg[7:0] s3_a, s3_b;
+reg[15:0] s3_xout, s3_yout;
 reg s3_valid;
-
-reg[7:0] s4_I00, s4_I10, s4_I01, s4_I11;
-reg[7:0] s4_a, s4_b;
-reg[15:0] s4_xout, s4_yout;
-reg s4_valid;
 
 reg[23:0] val;
 
@@ -64,7 +59,7 @@ always @(posedge clk or posedge rst) begin
             end
             else cnt_x<=cnt_x+1;
         end
-        if(s4_valid && s4_xout==W_out-1 && s4_yout==H_out-1) begin
+        if(s3_valid && s3_xout==W_out-1 && s3_yout==H_out-1) begin
             done<=1;
             running<=0;
             issued_last<=0;
@@ -100,33 +95,21 @@ always @(posedge clk) begin
 end
 
 always @(posedge clk) begin
+    s3_I00<=input_img[s2_y0*W_in+s2_x0];
+    s3_I10<=input_img[s2_y0*W_in+s2_x1];
+    s3_I01<=input_img[s2_y1*W_in+s2_x0];
+    s3_I11<=input_img[s2_y1*W_in+s2_x1];
     s3_a<=s2_a;
     s3_b<=s2_b;
-    s3_x0<=s2_x0;
-    s3_y0<=s2_y0;
-    s3_x1<=s2_x1;
-    s3_y1<=s2_y1;
     s3_xout<=s2_xout;
     s3_yout<=s2_yout;
     s3_valid<=s2_valid;
 end
 
 always @(posedge clk) begin
-    s4_I00<=input_img[s3_y0*W_in+s3_x0];
-    s4_I10<=input_img[s3_y0*W_in+s3_x1];
-    s4_I01<=input_img[s3_y1*W_in+s3_x0];
-    s4_I11<=input_img[s3_y1*W_in+s3_x1];
-    s4_a<=s3_a;
-    s4_b<=s3_b;
-    s4_xout<=s3_xout;
-    s4_yout<=s3_yout;
-    s4_valid<=s3_valid;
-end
-
-always @(posedge clk) begin
-    if(s4_valid) begin
-        val=(256-s4_a)*(256-s4_b)*s4_I00+s4_a*(256-s4_b)*s4_I10+(256-s4_a)*s4_b*s4_I01+s4_a*s4_b*s4_I11;
-        output_img[s4_yout*W_out+s4_xout]<=(val+32768)>>16;
+    if(s3_valid) begin
+        val=(256-s3_a)*(256-s3_b)*s3_I00+s3_a*(256-s3_b)*s3_I10+(256-s3_a)*s3_b*s3_I01+s3_a*s3_b*s3_I11;
+        output_img[s3_yout*W_out+s3_xout]<=(val+32768)>>16;
     end
 end
 
