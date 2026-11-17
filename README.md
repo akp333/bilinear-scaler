@@ -134,7 +134,7 @@ Verilog uses integer arithmetic only.
 | SSIM | 0.8743 |
 | Max pixel difference | 118 (out of 255) |
 
-While taking s1_xin, s1_yin as (cnt_x*W_in*256 + W_out/2)/W_out and (cnt_y*H_in*256 + H_out/2)/H_out
+While taking s1_xin, s1_yin as `(cnt_x * (W_in) * 256 + W_out/2)/W_out` and `(cnt_y * (H_in) * 256 + H_out/2)/H_out`
 
 | Metric | Result |
 |--------|--------|
