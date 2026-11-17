@@ -134,10 +134,18 @@ Verilog uses integer arithmetic only.
 | SSIM | 0.8743 |
 | Max pixel difference | 118 (out of 255) |
 
+While taking s1_xin, s1_yin as (cnt_x*W_in*256 + W_out/2)/W_out and (cnt_y*H_in*256 + H_out/2)/H_out
+
+| Metric | Result |
+|--------|--------|
+| PSNR | 65.62 dB |
+| SSIM | 1.0000 |
+| Max pixel difference | 1 |
+
 The error is a slight shift of the sampling points, not noise. It comes from the
 rounded scale factors, which for this size are `scale_x = 243` (exact value
 242.69) and `scale_y = 152` (exact value 151.55). That small error is multiplied
-by the output pixel position, so the sampling point drifts.
+by the output pixel position, so the sampling point drifts. This hypothesis is supported by the excellent metrics obtained after using hardware divide rather than the rounded scale factors.
 
 ## Status and limitations
 
